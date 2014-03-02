@@ -62,12 +62,12 @@
  
  const int DOLLAR_PULSE = 4; //pulses per dollar
  const int PULSE_TIMEOUT = 2000; //ms before pulse timeout
- const int MAX_1BITCOINS = 10; //max $1 btc per SD card
  const int MAX_1PEERCOINS = 10; // max $1 ppc per SD card
- const int MAX_5BITCOINS = 10; //max $5 btc per SD card
  const int MAX_5PEERCOINS = 10; // max $5 ppc per SD card
- const int MAX_10BITCOINS = 10; //max $10 btc per SD card
  const int MAX_10PEERCOINS = 10; // max $10 ppc per SD card
+ const int MAX_1BITCOINS = 10; //max $1 btc per SD card
+ const int MAX_5BITCOINS = 10; //max $5 btc per SD card
+ const int MAX_10BITCOINS = 10; //max $10 btc per SD card
  const int HEADER_LEN = 25; //maximum size of bitmap header
  
  #define SET_RTCLOCK      1 // Set to true to set Bitcoin transaction log clock to program compile time.
@@ -157,14 +157,14 @@ void loop(){
      if(pulseCount == DOLLAR_PULSE){
        //getNextBitcoin(); //dollar baby!   OLD CODE
        if((millis() - pulseTime) > PULSE_TIMEOUT){
-         getNextcoin(1);
+         getChoice(1);
          }
        else if(pulseCount == 5 * DOLLAR_PULSE){
          if((millis() - pulseTime) > PULSE_TIMEOUT){
-           getNextcoin(5);
+           getChoice(5);
          }
          else if(pulseCOunt == 10 * DOLLAR_PULSE){
-           getNextcoin(10);
+           getChoice(10);
          }
      }
      //----------------------------------------------------------
@@ -193,27 +193,48 @@ if(val == HIGH)
 }
 
 /*****************************************************
-getNextBitcoin
-- Read next bitcoin QR Code from SD Card
+getNextcoin
+- Read next coin QR Code from SD Card
+// Should be done
 
 ******************************************************/
 
-int getNextcoin(){
+int getNextcoin(amount, type){
     
-  int BTCNumber = 0, i = 0;
+  int Number = 0, i = 0;
  // long counter = 0;
  char cBuf, cPrev;
   
 
        
     Serial.println("card initialized.");
- 
-    while(BTCNumber<MAX_BITCOINS){
+    
+    int MAX_COINS = 0
+    if(type == PPC){
+      if(amount == 1){
+        MAX_COINS = MAX_1PEERCOINS
+      }
+      else if(amount ==5){
+        MAX_COINS = MAX_5PEERCOINS
+      }
+      else{
+        MAX_COINS = MAX_10PEERCOINS
+    if(type == BTC){
+      if(amount == 1){
+        MAX_COINS = MAX_1BITCOINS
+      }
+      else if(amount ==5){
+        MAX_COINS = MAX_5BITCOINS
+      }
+      else{
+        MAX_COINS = MAX_10BITCOINS
+        
+    while(Number<MAX_COINS){
       
          //prepend file name
-         String temp = "BTC_";
+         String temp = type + String(amount) + "_";
          //add file number
-         temp.concat(BTCNumber);
+         temp.concat(Number);
          //append extension
          temp.concat(".btc"); 
          
@@ -254,22 +275,23 @@ int getNextcoin(){
                printer->println(" ");
 
 
-          break; //stop looking, bitcoin file found
+          break; //stop looking, coin file found
          }  
           else{
-            if (BTCNumber >= MAX_BITCOINS -1){
+            if (Number >= MAX_COINS -1){
               
                 //----------------------------------------------------------
                 // Disable bill acceptor when bitcoins run out 
                 // pull low on Apex 5400 violet wire
                 //----------------------------------------------------------
               
+              digitalWrite(disablepin, LOW); //initialize pin up top
             }  
              Serial.print("file does not exist: ");
              Serial.println(filename);        
         }
-    //increment bitcoin number
-    BTCNumber++;
+    //increment coin number
+    Number++;
     }
 }  
 
@@ -414,6 +436,7 @@ Is an intermediary step for the user to choose their desired cryptocurrency
 ******************************************************/
 void getChoice(amount){
       int led = 0;
+      char type = ""
       while(choice == 1){
          timer = millis();
          if( millis() - timer >= 1000L){
@@ -437,12 +460,14 @@ void getChoice(amount){
              getChoice(amount);
            }
            else if(pin3 == HIGH){
+             type = "PPC"
              digitalWrite(pinppc,HIGH);
-             getnextcoin(amount, PPC);
+             getnextcoin(amount, type);
            }
            else(pin4 == HIGH) {
+             type = "BTC"
              digitalWrite(pinbtc,HIGH);
-             getnextcoin(amount, BTC);
+             getnextcoin(amount, type);
            }
          }
       }
