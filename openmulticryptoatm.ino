@@ -155,18 +155,15 @@ void loop(){
       return;
  
      if(pulseCount == DOLLAR_PULSE){
-       //getNextBitcoin(); //dollar baby!   OLD CODE
-       if((millis() - pulseTime) > PULSE_TIMEOUT){
-         getChoice(1);
-         }
-       else if(pulseCount == 5 * DOLLAR_PULSE){
-         if((millis() - pulseTime) > PULSE_TIMEOUT){
-           getChoice(5);
-         }
-         else if(pulseCOunt == 10 * DOLLAR_PULSE){
-           getChoice(10);
-         }
+       getChoice(1);
      }
+     else if(pulseCount == 5 * DOLLAR_PULSE){
+       getChoice(5);
+     }
+     else if(pulseCount == 10 * DOLLAR_PULSE){
+       getChoice(10);
+     }
+     
      //----------------------------------------------------------
      // Add additional currency denomination logic here: $5, $10, $20      
      //----------------------------------------------------------
@@ -436,6 +433,7 @@ Is an intermediary step for the user to choose their desired cryptocurrency
 ******************************************************/
 void getChoice(amount){
       int led = 0;
+      int choice = 1;
       char type = ""
       while(choice == 1){
          timer = millis();
@@ -450,22 +448,24 @@ void getChoice(amount){
              digitalWrite(pinbtc,HIGH);
              digitalWrite(pinppc,LOW);
            }
+         }  
          pin3 = digitalRead(pin3);
          pin4 = digitalRead(pin4);
          if((pin3 || pin4) == HIGH){
            led = 0;
+           choice = 0;
            digitalWrite(pinppc, LOW);
            digitalWrite(pinbtc, LOW);
            if( pin3 && pin4 == HIGH){
              getChoice(amount);
            }
            else if(pin3 == HIGH){
-             type = "PPC"
+             type = "PPC";
              digitalWrite(pinppc,HIGH);
              getnextcoin(amount, type);
            }
            else(pin4 == HIGH) {
-             type = "BTC"
+             type = "BTC";
              digitalWrite(pinbtc,HIGH);
              getnextcoin(amount, type);
            }
