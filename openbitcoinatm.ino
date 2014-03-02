@@ -1,5 +1,5 @@
 //*************************************************************************
- OpenBitcoinATM
+ OpenCryptoATM
  (ver. 1.5.4)
     
  MIT Licence (MIT)
@@ -23,8 +23,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 
- OpenBitcoinATM is the first open-source Bitcoin automated teller machine for
- experimentation and education. 
+ OpenMultiCryptoATM is based on John Mayo's OpenBitcoinATM.
   
  This application, counts pulses from a Pyramid Technologies Apex 5000
  series bill acceptor and interfaces with the Adafruit 597 TTL serial Mini Thermal 
