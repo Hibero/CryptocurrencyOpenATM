@@ -1,5 +1,5 @@
 //*************************************************************************
- OpenCryptoATM
+ OpenMultiCryptoATM
  (ver. 1.5.4)
     
  MIT Licence (MIT)
