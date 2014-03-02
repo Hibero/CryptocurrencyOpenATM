@@ -1,9 +1,8 @@
-openbitcoinatm
+Open MultiCrypto ATM
 ==============
 
-Open Bitcoin ATM -- The worlds first completely open-source Bitcoin ATM for Education and Experimentation.
+Open MultiCrypto ATM is an open sourced Multiple Cryptocurrency ATM based from John Mayo's Open Bitcoin ATM.
 
-See it in action here: http://youtu.be/A4KvAgJx4GU
+See John Mayo's Open Bitcoin ATM in action here: http://youtu.be/A4KvAgJx4GU
 
-Step by step tutorial here: http://openbitcoinatm.org
 
