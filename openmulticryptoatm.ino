@@ -62,7 +62,12 @@
  
  const int DOLLAR_PULSE = 4; //pulses per dollar
  const int PULSE_TIMEOUT = 2000; //ms before pulse timeout
- const int MAX_BITCOINS = 10; //max btc per SD card
+ const int MAX_1BITCOINS = 10; //max $1 btc per SD card
+ const int MAX_1PEERCOINS = 10; // max $1 ppc per SD card
+ const int MAX_5BITCOINS = 10; //max $5 btc per SD card
+ const int MAX_5PEERCOINS = 10; // max $5 ppc per SD card
+ const int MAX_10BITCOINS = 10; //max $10 btc per SD card
+ const int MAX_10PEERCOINS = 10; // max $10 ppc per SD card
  const int HEADER_LEN = 25; //maximum size of bitmap header
  
  #define SET_RTCLOCK      1 // Set to true to set Bitcoin transaction log clock to program compile time.
@@ -93,7 +98,7 @@
  long pulseCount = 0;
  unsigned long pulseTime, lastTime;
  volatile long pulsePerDollar = 4;
- 
+
 void setup(){
   Serial.begin(57600); //baud rate for serial monitor
   attachInterrupt(0, onPulse, RISING); //interupt for Apex bill acceptor pulse detect
@@ -149,9 +154,19 @@ void loop(){
     if((millis() - pulseTime) < PULSE_TIMEOUT) 
       return;
  
-     if(pulseCount == DOLLAR_PULSE)
-       getNextBitcoin(); //dollar baby!
-       
+     if(pulseCount == DOLLAR_PULSE){
+       //getNextBitcoin(); //dollar baby!   OLD CODE
+       if((millis() - pulseTime) > PULSE_TIMEOUT){
+         getNextcoin(1);
+         }
+       else if(pulseCount == 5 * DOLLAR_PULSE){
+         if((millis() - pulseTime) > PULSE_TIMEOUT){
+           getNextcoin(5);
+         }
+         else if(pulseCOunt == 10 * DOLLAR_PULSE){
+           getNextcoin(10);
+         }
+     }
      //----------------------------------------------------------
      // Add additional currency denomination logic here: $5, $10, $20      
      //----------------------------------------------------------
@@ -183,7 +198,7 @@ getNextBitcoin
 
 ******************************************************/
 
-int getNextBitcoin(){
+int getNextcoin(){
     
   int BTCNumber = 0, i = 0;
  // long counter = 0;
@@ -388,4 +403,47 @@ void updateLog(){
       logfile.print(":");
       logfile.println(now.second(), DEC);
       logfile.close();
+}
+
+/*****************************************************
+getChoice()
+Is an intermediary step for the user to choose their desired cryptocurrency
+//pins need to be configured up top
+//Only configured for two different coins at the moment: PPC and BTC
+
+******************************************************/
+void getChoice(amount){
+      int led = 0;
+      while(choice == 1){
+         timer = millis();
+         if( millis() - timer >= 1000L){
+           if(led == 1){
+             led = 0;
+             digitalWrite(pinbtc,LOW);
+             digitalWrite(pinppc,HIGH);
+           }
+           else{
+             led = 1;
+             digitalWrite(pinbtc,HIGH);
+             digitalWrite(pinppc,LOW);
+           }
+         pin3 = digitalRead(pin3);
+         pin4 = digitalRead(pin4);
+         if((pin3 || pin4) == HIGH){
+           led = 0;
+           digitalWrite(pinppc, LOW);
+           digitalWrite(pinbtc, LOW);
+           if( pin3 && pin4 == HIGH){
+             getChoice(amount);
+           }
+           else if(pin3 == HIGH){
+             digitalWrite(pinppc,HIGH);
+             getnextcoin(amount, PPC);
+           }
+           else(pin4 == HIGH) {
+             digitalWrite(pinbtc,HIGH);
+             getnextcoin(amount, BTC);
+           }
+         }
+      }
 }
